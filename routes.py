@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timedelta
 from flask import render_template, redirect, url_for, flash, request, session, jsonify
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from app import app, db
 from models import User, Upload, Review, Strike, WithdrawalRequest, AdminAction, Rating
 from forms import UploadForm, ReviewForm, RatingForm
@@ -254,25 +254,59 @@ def create_test_content_old():
 
 @app.route('/')
 def index():
-    """Landing page redirects to name entry"""
-    return redirect(url_for('name_entry'))
+    """Landing page with login/signup options"""
+    return render_template('index.html')
 
-@app.route('/name_entry', methods=['GET', 'POST'])
-def name_entry():
-    """Name entry page before dashboard"""
-    if request.method == 'POST':
-        name = request.form.get('name', '').strip()
-        if name and len(name) >= 2 and len(name) <= 50 and name.replace(' ', '').isalpha():
-            session['user_name'] = name
-            
-            # Create demo content for reviews if needed
-            create_demo_content_for_reviews()
-            
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """User login page"""
+    from forms import LoginForm
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.password_hash, form.password.data):
+            session['user_id'] = user.id
+            session['user_name'] = user.name
+            flash('Login successful!', 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('Please enter a valid name (2-50 characters, letters and spaces only)', 'error')
-    
-    return render_template('name_entry.html')
+            flash('Invalid email or password.', 'error')
+    return render_template('auth/login.html', form=form)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    """User signup page"""
+    from forms import SignupForm
+    form = SignupForm()
+    if form.validate_on_submit():
+        # Check if email already exists
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        if existing_user:
+            flash('Email already registered. Please use a different email.', 'error')
+            return render_template('auth/signup.html', form=form)
+        
+        # Create new user
+        user = User()
+        user.name = form.name.data
+        user.email = form.email.data
+        user.username = form.email.data.split('@')[0]  # Use email prefix as username
+        user.password_hash = generate_password_hash(form.password.data)
+        user.xp_points = 500
+        user.daily_upload_count = 0
+        user.daily_upload_bytes = 0
+        user.daily_review_count = 0
+        user.daily_upload_reset = datetime.utcnow()
+        user.daily_review_reset = datetime.utcnow()
+        user.uploader_strikes = 0
+        user.reviewer_strikes = 0
+        user.is_banned = False
+        
+        db.session.add(user)
+        db.session.commit()
+        
+        flash('Account created successfully! Please log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('auth/signup.html', form=form)
 
 @app.route('/health')
 def health():
@@ -290,13 +324,16 @@ def health():
 @app.route('/dashboard')
 def dashboard():
     """Dashboard page"""
-    # Check if user has entered name
-    if 'user_name' not in session:
-        return redirect(url_for('name_entry'))
+    # Check if user is logged in
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     
     try:
-        user = get_or_create_user_for_session()
-        user_name = session['user_name']
+        user_id = session.get('user_id')
+        user = User.query.get(user_id)
+        if not user:
+            return redirect(url_for('login'))
+        user_name = user.name
         
         # Get user stats
         upload_count = Upload.query.filter_by(user_id=user.id).count()
@@ -361,8 +398,11 @@ def dashboard():
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     """File upload endpoint"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     try:
-        user = get_or_create_user_for_session()
+        user = User.query.get(session['user_id'])
         form = UploadForm()
         
         if form.validate_on_submit():
@@ -438,8 +478,11 @@ def upload_file():
 @app.route('/review')
 def review_content():
     """Content review page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     try:
-        user = get_or_create_user_for_session()
+        user = User.query.get(session['user_id'])
         
         # Get uploads that need review (not from current user and not already reviewed)
         reviewed_upload_ids = [r.upload_id for r in Review.query.filter_by(reviewer_id=user.id).all()]
@@ -468,8 +511,11 @@ def review_content():
 @app.route('/review/<int:upload_id>', methods=['GET', 'POST'])
 def review_upload(upload_id):
     """Review a specific upload"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     try:
-        user = get_or_create_user_for_session()
+        user = User.query.get(session['user_id'])
         upload = Upload.query.get_or_404(upload_id)
         form = ReviewForm()
         
@@ -527,8 +573,11 @@ def review_upload(upload_id):
 @app.route('/profile')
 def profile():
     """User profile page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     try:
-        user = get_or_create_user_for_session()
+        user = User.query.get(session['user_id'])
         
         # Get user's strikes and violation history
         strikes = Strike.query.filter_by(user_id=user.id)\
@@ -547,8 +596,11 @@ def profile():
 @app.route('/rating', methods=['GET', 'POST'])
 def rate_website():
     """Website rating and feedback page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
     try:
-        user = get_or_create_user_for_session()
+        user = User.query.get(session['user_id'])
         form = RatingForm()
         
         if request.method == 'POST':
@@ -615,6 +667,13 @@ def delete_upload(upload_id):
         app.logger.error(f"Delete upload error: {e}")
         flash('Error deleting upload.', 'error')
         return redirect(url_for('dashboard'))
+
+@app.route('/logout')
+def logout():
+    """User logout"""
+    session.clear()
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('index'))
 
 # Error handlers
 @app.errorhandler(404)

@@ -22,6 +22,41 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
 
 class UploadForm(FlaskForm):
+    """File upload form"""
+    file = FileField('Select File', validators=[
+        FileRequired(),
+        FileAllowed(['mp3', 'wav', 'mp4', 'avi', 'pdf', 'doc', 'docx', 'txt', 'py', 'js', 'html', 'css', 'jpg', 'png', 'gif', 'zip'], 
+                   'File type not allowed!')
+    ])
+    description = TextAreaField('Description', validators=[DataRequired(), Length(min=10, max=500)])
+    category = SelectField('Category', choices=[
+        ('audio', 'Audio'),
+        ('document', 'Document'), 
+        ('code', 'Code'),
+        ('text', 'Text'),
+        ('image', 'Image'),
+        ('archive', 'Archive')
+    ], validators=[DataRequired()])
+    ai_consent = BooleanField('I consent to AI analysis of this content', validators=[DataRequired()])
+
+class ReviewForm(FlaskForm):
+    """Content review form"""
+    rating = IntegerField('Rating (1-5)', validators=[DataRequired()])
+    description = TextAreaField('Review Description', validators=[DataRequired(), Length(min=10, max=500)])
+
+class RatingForm(FlaskForm):
+    """Website rating form"""
+    rating = IntegerField('Rating (1-5)', validators=[DataRequired()])
+    category = SelectField('Category', choices=[
+        ('overall', 'Overall Experience'),
+        ('upload', 'Upload System'),
+        ('review', 'Review System'),
+        ('ui', 'User Interface')
+    ], validators=[DataRequired()])
+    description = TextAreaField('Feedback', validators=[Length(max=1000)])
+    contact_email = StringField('Email (optional)', validators=[Email()])
+
+class UploadForm(FlaskForm):
     file = FileField('File', validators=[FileRequired()])
     description = TextAreaField('Description', validators=[DataRequired(), Length(min=10, max=1000)])
     category = SelectField('Category', validators=[DataRequired()], choices=[

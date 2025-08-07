@@ -19,16 +19,16 @@
                 </p>
                 
                 <div class="d-flex gap-3 flex-wrap">
-                    {% if not current_user.is_authenticated %}
+                    {% if session.user_id %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-white btn-lg">
+                        <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                    </a>
+                    {% else %}
                     <a href="{{ url_for('signup') }}" class="btn btn-white btn-lg">
                         <i class="fas fa-rocket me-2"></i>Get Started
                     </a>
                     <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
                         <i class="fas fa-sign-in-alt me-2"></i>Login
-                    </a>
-                    {% else %}
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-white btn-lg">
-                        <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
                     </a>
                     {% endif %}
                 </div>
@@ -176,13 +176,13 @@
 </div>
 
 <!-- Stats Section -->
-{% if current_user.is_authenticated %}
+{% if session.user_id %}
 <div class="container py-5">
     <div class="row text-center g-4">
         <div class="col-6 col-md-3">
             <div class="card border-0">
                 <div class="card-body">
-                    <h3 class="fw-bold text-black mb-1">{{ current_user.xp_points }}</h3>
+                    <h3 class="fw-bold text-black mb-1">{{ user.xp_points if user else 0 }}</h3>
                     <small class="text-muted">Your XP Points</small>
                 </div>
             </div>
@@ -190,7 +190,7 @@
         <div class="col-6 col-md-3">
             <div class="card border-0">
                 <div class="card-body">
-                    <h3 class="fw-bold text-black mb-1">{{ current_user.uploads|length }}</h3>
+                    <h3 class="fw-bold text-black mb-1">{{ user.uploads|length if user else 0 }}</h3>
                     <small class="text-muted">Uploads</small>
                 </div>
             </div>
@@ -198,7 +198,7 @@
         <div class="col-6 col-md-3">
             <div class="card border-0">
                 <div class="card-body">
-                    <h3 class="fw-bold text-black mb-1">{{ current_user.reviews|length }}</h3>
+                    <h3 class="fw-bold text-black mb-1">{{ user.reviews|length if user else 0 }}</h3>
                     <small class="text-muted">Reviews</small>
                 </div>
             </div>
@@ -207,7 +207,7 @@
             <div class="card border-0">
                 <div class="card-body">
                     <h3 class="fw-bold text-black mb-1">
-                        {% if current_user.is_banned %}
+                        {% if user and user.is_banned %}
                         <span class="text-danger">Banned</span>
                         {% else %}
                         <span class="text-success">Active</span>
@@ -222,7 +222,7 @@
 {% endif %}
 
 <!-- CTA Section -->
-{% if not current_user.is_authenticated %}
+{% if not session.user_id %}
 <div class="bg-black text-white py-5">
     <div class="container text-center">
         <h2 class="fw-bold mb-3">Ready to Start Earning?</h2>
