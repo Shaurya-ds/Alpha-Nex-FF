@@ -5,51 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALPHANEX - Power the Future of AI. Get Paid for It.</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: #f8f9fa;
+            min-height: 80vh;
             display: flex;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a"><stop offset="0" stop-color="%23fff" stop-opacity=".1"/><stop offset="1" stop-color="%23fff" stop-opacity="0"/></radialGradient></defs><g opacity=".8"><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="300" cy="700" r="120" fill="url(%23a)"/><circle cx="700" cy="800" r="80" fill="url(%23a)"/></g></svg>') no-repeat center;
-            background-size: cover;
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        .futuristic-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-        }
-        .glow-btn {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-        .glow-btn:hover {
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
-            transform: translateY(-2px);
         }
         .feature-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #212529;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -61,13 +37,12 @@
         .stats-counter {
             font-size: 3rem;
             font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #212529;
         }
         .section-title {
             position: relative;
             display: inline-block;
+            color: #212529;
         }
         .section-title::after {
             content: '';
@@ -77,20 +52,34 @@
             transform: translateX(-50%);
             width: 60px;
             height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #212529;
+        }
+        .cta-section {
+            background-color: #212529;
+            color: white;
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold text-dark" href="{{ url_for('index') }}">
                 <i class="fas fa-cube me-2"></i>ALPHANEX
             </a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -104,11 +93,11 @@
                     </li>
                     {% if session.user_id %}
                     <li class="nav-item">
-                        <a class="nav-link btn btn-light text-dark px-3 ms-2" href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a class="nav-link btn btn-dark text-white px-3 ms-2" href="{{ url_for('dashboard') }}">Dashboard</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light px-3 ms-2" href="{{ url_for('login') }}">Login</a>
+                        <a class="nav-link btn btn-outline-dark px-3 ms-2" href="{{ url_for('login') }}">Login</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -117,53 +106,35 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section text-white">
-        <div class="container position-relative">
+    <section class="hero-section">
+        <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-2 fw-bold mb-4 animate__animated animate__fadeInUp">
-                        🚀 Shape Tomorrow's AI.<br>
-                        <span class="text-warning">Earn Real Money Today.</span>
+                    <h1 class="display-3 fw-bold text-dark mb-4">
+                        Power the Future of AI. <span class="text-muted">Get Paid for It.</span>
                     </h1>
-                    <p class="lead mb-5 animate__animated animate__fadeInUp animate__delay-1s">
+                    <p class="lead text-muted mb-4">
                         Join the global movement. Contribute data, review others' work, and earn XP that converts into real value.
                     </p>
-                    <p class="h5 mb-5 text-light animate__animated animate__fadeInUp animate__delay-2s">
-                        <i class="fas fa-brain me-2"></i>
-                        "Your knowledge, your effort, your reward. Help train the AI of tomorrow."
+                    <p class="mb-4 text-dark">
+                        <strong>Your knowledge, your effort, your reward. Help train the AI of tomorrow.</strong>
                     </p>
-                    <div class="d-flex gap-3 flex-wrap animate__animated animate__fadeInUp animate__delay-3s">
-                        {% if session.user_id %}
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-warning btn-lg glow-btn px-4 py-3">
-                            <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
-                        </a>
-                        {% else %}
-                        <a href="{{ url_for('signup') }}" class="btn btn-warning btn-lg glow-btn px-4 py-3">
+                    
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ url_for('login') }}" class="btn btn-dark btn-lg">
                             <i class="fas fa-rocket me-2"></i>Start Contributing
                         </a>
-                        <a href="#about" class="btn btn-outline-light btn-lg px-4 py-3">
-                            <i class="fas fa-info-circle me-2"></i>Learn How It Works
+                        <a href="#about" class="btn btn-outline-dark btn-lg">
+                            <i class="fas fa-play me-2"></i>Learn How It Works
                         </a>
-                        {% endif %}
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <div class="futuristic-card p-5">
-                        <i class="fas fa-globe-americas display-1 mb-4 text-warning"></i>
-                        <h3 class="mb-3">Global AI Training Platform</h3>
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <div class="stats-counter">50K+</div>
-                                <small>Contributors</small>
-                            </div>
-                            <div class="col-4">
-                                <div class="stats-counter">1M+</div>
-                                <small>Data Points</small>
-                            </div>
-                            <div class="col-4">
-                                <div class="stats-counter">$100K+</div>
-                                <small>Paid Out</small>
-                            </div>
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-5">
+                            <i class="fas fa-brain fa-5x text-dark mb-4"></i>
+                            <h3 class="text-dark">AI-Powered Platform</h3>
+                            <p class="text-muted">Join thousands of contributors worldwide building the future of artificial intelligence</p>
                         </div>
                     </div>
                 </div>
@@ -171,24 +142,46 @@
         </div>
     </section>
 
-    <!-- About ALPHANEX Section -->
+    <!-- Stats Section -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="stats-counter">10K+</div>
+                    <p class="text-muted">Contributors</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stats-counter">50K+</div>
+                    <p class="text-muted">Data Points</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stats-counter">$100K+</div>
+                    <p class="text-muted">Earned by Users</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="stats-counter">99%</div>
+                    <p class="text-muted">Accuracy Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
     <section id="about" class="py-5 bg-light">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title fw-bold display-4 text-dark">🌍 About ALPHANEX</h2>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card shadow-lg border-0 rounded-4">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="section-title display-5 fw-bold mb-5">About ALPHANEX</h2>
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body p-5">
-                            <p class="lead text-center mb-4">
-                                <strong>ALPHANEX</strong> is a crowd-powered platform where people contribute and validate real-world data — from text, audio, videos, image labeling, to survey responses. This data helps train advanced Artificial Intelligence systems.
+                            <p class="lead text-muted mb-4">
+                                ALPHANEX is a crowd-powered platform where people contribute and validate real-world data — from text, audio, videos, image labeling, to survey responses. This data helps train advanced Artificial Intelligence systems.
                             </p>
-                            <p class="text-center mb-4">
-                                Contributors earn <strong class="text-primary">XP (Experience Points)</strong> for every approved submission or review. The XP you earn can later be converted into real money or other rewards.
+                            <p class="text-muted mb-4">
+                                Contributors earn XP (Experience Points) for every approved submission or review. The XP you earn can later be converted into real money or other rewards.
                             </p>
-                            <p class="text-center mb-0">
-                                We also run <strong class="text-warning">global contests</strong> where top contributors win significantly higher payouts. Whether you're a student, professional, or digital explorer — there's a place for you at ALPHANEX.
+                            <p class="text-muted">
+                                We also run global contests where top contributors win significantly higher payouts. Whether you're a student, professional, or digital explorer — there's a place for you at ALPHANEX.
                             </p>
                         </div>
                     </div>
@@ -198,81 +191,72 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-5">
+    <section id="features" class="py-5 bg-white">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title fw-bold display-4 text-dark">🛠 Platform Features</h2>
-                <p class="lead text-muted">Everything you need to contribute and earn</p>
-            </div>
-            
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="card-body p-4">
+            <h2 class="section-title display-5 fw-bold text-center mb-5">Platform Features</h2>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm feature-card">
+                        <div class="card-body text-center p-4">
                             <div class="feature-icon">
                                 <i class="fas fa-upload"></i>
                             </div>
-                            <h5 class="fw-bold">🔁 Contribute Data</h5>
+                            <h5 class="fw-bold text-dark">Contribute Data</h5>
                             <p class="text-muted">Submit valuable data in tasks such as labeling, writing, transcription, and more.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="card-body p-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm feature-card">
+                        <div class="card-body text-center p-4">
                             <div class="feature-icon">
                                 <i class="fas fa-check-circle"></i>
                             </div>
-                            <h5 class="fw-bold">✅ Review Submissions</h5>
+                            <h5 class="fw-bold text-dark">Review Submissions</h5>
                             <p class="text-muted">Help validate other users' work to keep the data clean and accurate.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="card-body p-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm feature-card">
+                        <div class="card-body text-center p-4">
                             <div class="feature-icon">
-                                <i class="fas fa-coins"></i>
+                                <i class="fas fa-gem"></i>
                             </div>
-                            <h5 class="fw-bold">💎 Earn XP</h5>
+                            <h5 class="fw-bold text-dark">Earn XP</h5>
                             <p class="text-muted">Receive XP for every approved submission and review.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="card-body p-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm feature-card">
+                        <div class="card-body text-center p-4">
                             <div class="feature-icon">
                                 <i class="fas fa-trophy"></i>
                             </div>
-                            <h5 class="fw-bold">🎉 Join Contests</h5>
+                            <h5 class="fw-bold text-dark">Join Contests</h5>
                             <p class="text-muted">Compete in periodic events to earn large bonus payouts.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="card-body p-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm feature-card">
+                        <div class="card-body text-center p-4">
                             <div class="feature-icon">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-chart-bar"></i>
                             </div>
-                            <h5 class="fw-bold">📊 Track Everything</h5>
+                            <h5 class="fw-bold text-dark">Track Everything</h5>
                             <p class="text-muted">Monitor your XP, performance, and task history in a user-friendly dashboard.</p>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="card-body p-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm feature-card">
+                        <div class="card-body text-center p-4">
                             <div class="feature-icon">
                                 <i class="fas fa-robot"></i>
                             </div>
-                            <h5 class="fw-bold">🤖 Used by AI Companies</h5>
+                            <h5 class="fw-bold text-dark">Used by AI Companies</h5>
                             <p class="text-muted">Your contributions are sent to organizations building the next generation of AI systems.</p>
                         </div>
                     </div>
@@ -284,83 +268,84 @@
     <!-- Policies Section -->
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title fw-bold display-4 text-dark">📄 Our Policies</h2>
+            <h2 class="section-title display-5 fw-bold text-center mb-5">Our Policies</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-shield-alt me-2"></i>Privacy Policy</h5>
+                            <p class="text-muted">We respect your privacy. All data you submit is anonymized and securely stored. Personal data is never sold.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-coins me-2"></i>XP and Reward Policy</h5>
+                            <p class="text-muted">XP is earned fairly through useful contributions and high-quality reviews. Abusing the system leads to bans and loss of XP.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-dollar-sign me-2"></i>Monetization Policy</h5>
+                            <p class="text-muted">Data is licensed to AI companies and research partners. A portion of that revenue is distributed to contributors based on their XP.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-gavel me-2"></i>Refund & Appeal Policy</h5>
+                            <p class="text-muted">Incorrectly rejected XP can be appealed within 7 days. Appeals are handled by moderators and advanced AI models.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold text-primary mb-3">
-                                <i class="fas fa-shield-alt me-2"></i>Privacy Policy
-                            </h5>
-                            <p class="mb-0">We respect your privacy. All data you submit is anonymized and securely stored. Personal data is never sold.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold text-success mb-3">
-                                <i class="fas fa-star me-2"></i>XP and Reward Policy
-                            </h5>
-                            <p class="mb-0">XP is earned fairly through useful contributions and high-quality reviews. Abusing the system leads to bans and loss of XP. XP can be redeemed once it reaches a certain threshold.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold text-warning mb-3">
-                                <i class="fas fa-dollar-sign me-2"></i>Monetization Policy
-                            </h5>
-                            <p class="mb-0">Data is licensed to AI companies and research partners. A portion of that revenue is distributed to contributors based on their XP. Earnings are released after quality verification.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="card h-100 border-0 shadow">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold text-info mb-3">
-                                <i class="fas fa-balance-scale me-2"></i>Refund & Appeal Policy
-                            </h5>
-                            <p class="mb-0">Incorrectly rejected XP can be appealed within 7 days. Appeals are handled by moderators and advanced AI models. All decisions are final after re-evaluation.</p>
-                        </div>
-                    </div>
-                </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-4">Ready to Start Earning?</h2>
+            <p class="lead mb-4">Join thousands of contributors worldwide and start earning XP today!</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>Sign Up Now
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Community & Support Section -->
-    <section id="community" class="py-5 bg-dark text-white">
+    <section id="community" class="py-5 bg-white">
         <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="section-title fw-bold display-4">👥 Community & Support</h2>
-            </div>
-            
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="row text-center g-4">
-                        <div class="col-md-6">
-                            <div class="futuristic-card p-4">
-                                <i class="fas fa-envelope fa-3x text-warning mb-3"></i>
-                                <h5 class="fw-bold">Contact Us</h5>
-                                <p class="mb-2">📧 alphanex923@gmail.com</p>
-                                <p class="mb-0 text-success">🕐 Support Hours: 24×7</p>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="futuristic-card p-4">
-                                <i class="fas fa-users fa-3x text-warning mb-3"></i>
-                                <h5 class="fw-bold">Join Our Community</h5>
-                                <p class="mb-2">Connect with fellow contributors</p>
-                                <p class="mb-0">Share tips and earn together</p>
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="section-title display-5 fw-bold mb-5">Community & Support</h2>
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-5">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <i class="fas fa-envelope fa-3x text-dark mb-3"></i>
+                                    <h6 class="fw-bold">Contact</h6>
+                                    <p class="text-muted">alphanex923@gmail.com</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <i class="fas fa-clock fa-3x text-dark mb-3"></i>
+                                    <h6 class="fw-bold">Support Hours</h6>
+                                    <p class="text-muted">24×7</p>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <i class="fas fa-users fa-3x text-dark mb-3"></i>
+                                    <h6 class="fw-bold">Community</h6>
+                                    <p class="text-muted">Global Network</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -369,102 +354,26 @@
         </div>
     </section>
 
-    <!-- Call to Action Section -->
-    {% if not session.user_id %}
-    <section class="py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <div class="container text-center text-white">
-            <h2 class="fw-bold mb-3 display-4">Ready to Start Earning?</h2>
-            <p class="lead mb-5">Join ALPHANEX today and start building your XP points for future rewards.</p>
-            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a href="{{ url_for('signup') }}" class="btn btn-warning btn-lg glow-btn px-5 py-3">
-                    <i class="fas fa-user-plus me-2"></i>Create Account
-                </a>
-                <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-5 py-3">
-                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                </a>
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4">
+    <footer class="bg-light border-top py-4">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5 class="fw-bold">
-                        <i class="fas fa-cube me-2"></i>ALPHANEX
-                    </h5>
-                    <p class="mb-0">Powering the future of AI through human intelligence.</p>
+                    <h6 class="fw-bold text-dark">ALPHANEX</h6>
+                    <p class="text-muted mb-0">Earn XP points that can be converted to money once our web app goes live.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p class="mb-0">&copy; 2025 ALPHANEX. All rights reserved.</p>
-                    <p class="mb-0">
-                        <a href="mailto:alphanex923@gmail.com" class="text-warning text-decoration-none">
-                            alphanex923@gmail.com
-                        </a>
-                    </p>
+                    <div class="d-flex justify-content-md-end gap-4">
+                        <a href="#" class="text-decoration-none text-muted">Terms</a>
+                        <a href="#" class="text-decoration-none text-muted">Privacy</a>
+                        <a href="#" class="text-decoration-none text-muted">Support</a>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // Add scroll effect to navbar
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(33, 37, 41, 0.95)';
-                navbar.style.backdropFilter = 'blur(10px)';
-            } else {
-                navbar.style.background = '#212529';
-                navbar.style.backdropFilter = 'none';
-            }
-        });
-
-        // Animate counters when in viewport
-        const observerOptions = {
-            threshold: 0.7
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const counters = entry.target.querySelectorAll('.stats-counter');
-                    counters.forEach(counter => {
-                        const target = parseInt(counter.textContent.replace(/\D/g, ''));
-                        const suffix = counter.textContent.replace(/[\d,]/g, '');
-                        let count = 0;
-                        const timer = setInterval(() => {
-                            count += Math.ceil(target / 20);
-                            if (count >= target) {
-                                counter.textContent = target.toLocaleString() + suffix;
-                                clearInterval(timer);
-                            } else {
-                                counter.textContent = count.toLocaleString() + suffix;
-                            }
-                        }, 50);
-                    });
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        const statsSection = document.querySelector('.futuristic-card');
-        if (statsSection) {
-            observer.observe(statsSection);
-        }
-    </script>
 </body>
 </html>
