@@ -595,6 +595,40 @@ def profile():
         return render_template('error.html', error=f"Profile error: {str(e)}")
 
 
+@app.route('/ranking')
+def ranking():
+    """Ranking and leaderboard page"""
+    if 'user_id' not in session:
+        user = get_or_create_user_for_session()
+        session['user_id'] = user.id
+        session['user_name'] = 'Demo User'
+    
+    try:
+        user = User.query.get(session['user_id'])
+        
+        # Get top uploaders (by upload count)
+        top_uploaders = db.session.query(User)\
+            .join(Upload)\
+            .group_by(User.id)\
+            .order_by(func.count(Upload.id).desc(), User.xp_points.desc())\
+            .limit(10).all()
+        
+        # Get top reviewers (by review count)
+        top_reviewers = db.session.query(User)\
+            .join(Review, User.id == Review.reviewer_id)\
+            .group_by(User.id)\
+            .order_by(func.count(Review.id).desc(), User.xp_points.desc())\
+            .limit(10).all()
+        
+        return render_template('ranking.html',
+                             current_user=user,
+                             top_uploaders=top_uploaders,
+                             top_reviewers=top_reviewers)
+                             
+    except Exception as e:
+        app.logger.error(f"Ranking error: {e}")
+        return render_template('error.html', error=f"Ranking error: {str(e)}")
+
 @app.route('/rating', methods=['GET', 'POST'])
 def rate_website():
     """Website rating and feedback page"""

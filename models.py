@@ -226,3 +226,82 @@ class Rating(db.Model):
 
     # Relationship
     user = db.relationship('User', backref='ratings')
+
+# Add ranking system methods to User class
+def get_uploader_rank(self):
+    """Get user's upload ranking info"""
+    try:
+        upload_count = Upload.query.filter_by(user_id=self.id).count()
+        
+        # Define tier thresholds and names
+        tiers = [
+            (0, "Newer User", "99%", "Complete your first upload to advance!"),
+            (2, "Beginner", "95-98%", "Upload 2+ files to reach Contributor"),
+            (6, "Contributor", "90-94%", "Upload 6+ files to reach Active Member"),
+            (11, "Active Member", "80-89%", "Upload 11+ files to reach Regular"),
+            (21, "Regular", "70-79%", "Upload 21+ files to reach Veteran"),
+            (31, "Veteran", "50-69%", "Upload 31+ files to reach Expert"),
+            (51, "Expert", "30-49%", "Upload 51+ files to reach Master"),
+            (81, "Master", "10-29%", "Upload 81+ files to reach Legend"),
+            (121, "Legend", "5-9%", "Upload 121+ files to reach Elite"),
+            (201, "Elite", "2-4%", "Upload 201+ files to reach Ultimate Elite"),
+            (500, "Ultimate Elite", "1%", "You've reached the highest tier!")
+        ]
+        
+        current_tier = tiers[0]
+        for threshold, name, rank, next_goal in tiers:
+            if upload_count >= threshold:
+                current_tier = (threshold, name, rank, next_goal)
+            else:
+                break
+                
+        return {
+            'count': upload_count,
+            'tier_name': current_tier[1],
+            'rank': current_tier[2],
+            'next_goal': current_tier[3],
+            'threshold': current_tier[0]
+        }
+    except:
+        return {'count': 0, 'tier_name': 'Newer User', 'rank': '99%', 'next_goal': 'Complete your first upload!', 'threshold': 0}
+
+def get_reviewer_rank(self):
+    """Get user's review ranking info"""
+    try:
+        review_count = Review.query.filter_by(reviewer_id=self.id).count()
+        
+        # Define tier thresholds and names
+        tiers = [
+            (0, "Newer Reviewer", "99%", "Complete your first review to advance!"),
+            (1, "Review Beginner", "95-98%", "Complete 3+ reviews to reach Review Contributor"),
+            (3, "Review Contributor", "90-94%", "Complete 6+ reviews to reach Active Reviewer"),
+            (6, "Active Reviewer", "80-89%", "Complete 11+ reviews to reach Regular Reviewer"),
+            (11, "Regular Reviewer", "70-79%", "Complete 16+ reviews to reach Veteran Reviewer"),
+            (16, "Veteran Reviewer", "50-69%", "Complete 26+ reviews to reach Expert Reviewer"),
+            (26, "Expert Reviewer", "30-49%", "Complete 41+ reviews to reach Master Reviewer"),
+            (41, "Master Reviewer", "10-29%", "Complete 61+ reviews to reach Legend Reviewer"),
+            (61, "Legend Reviewer", "5-9%", "Complete 101+ reviews to reach Elite Reviewer"),
+            (101, "Elite Reviewer", "2-4%", "Complete 200+ reviews to reach Ultimate Elite"),
+            (200, "Ultimate Elite Reviewer", "1%", "You've reached the highest tier!")
+        ]
+        
+        current_tier = tiers[0]
+        for threshold, name, rank, next_goal in tiers:
+            if review_count >= threshold:
+                current_tier = (threshold, name, rank, next_goal)
+            else:
+                break
+                
+        return {
+            'count': review_count,
+            'tier_name': current_tier[1],
+            'rank': current_tier[2],
+            'next_goal': current_tier[3],
+            'threshold': current_tier[0]
+        }
+    except:
+        return {'count': 0, 'tier_name': 'Newer Reviewer', 'rank': '99%', 'next_goal': 'Complete your first review!', 'threshold': 0}
+
+# Add methods to User class
+User.get_uploader_rank = get_uploader_rank
+User.get_reviewer_rank = get_reviewer_rank

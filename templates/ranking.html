@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Rankings - ALPHANEX</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .ranking-card {
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .ranking-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .tier-badge {
+            position: relative;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #212529, #495057);
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .tier-badge.elite {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+        }
+        .tier-badge.legend {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+        }
+        .tier-badge.master {
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+        }
+        .tier-badge.expert {
+            background: linear-gradient(135deg, #198754, #20c997);
+        }
+        .tier-badge.veteran {
+            background: linear-gradient(135deg, #fd7e14, #ffc107);
+        }
+        .progress-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#0d6efd 0deg, #e9ecef 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto 1rem;
+        }
+        .progress-ring::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+        }
+        .progress-text {
+            position: relative;
+            z-index: 2;
+            font-weight: 700;
+            color: #212529;
+        }
+        .leaderboard-item {
+            transition: all 0.2s ease;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .leaderboard-item:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.02);
+        }
+        .rank-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0d6efd;
+            min-width: 40px;
+        }
+        .rank-number.top3 {
+            color: #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-dark" href="{{ url_for('index') }}">
+                <i class="fas fa-cube me-2"></i>ALPHANEX
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('upload_file') }}">Upload</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('review_content') }}">Review</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('ranking') }}">Rankings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">Community Rankings</h1>
+            <p class="lead text-muted">See where you stand in our global community!</p>
+        </div>
+
+        <!-- User's Current Status -->
+        {% if current_user %}
+        <div class="row mb-5">
+            <div class="col-lg-6 mb-4">
+                <div class="card ranking-card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-upload fa-3x text-primary mb-3"></i>
+                        <h4 class="card-title">Your Uploader Rank</h4>
+                        <div class="tier-badge {{ current_user.get_uploader_rank()['tier_name'].lower().replace(' ', '-') }}">
+                            {{ current_user.get_uploader_rank()['tier_name'] }}
+                        </div>
+                        <h3 class="text-primary mb-3">{{ current_user.get_uploader_rank()['rank'] }}</h3>
+                        <div class="progress-ring">
+                            <div class="progress-text">{{ current_user.get_uploader_rank()['count'] }}</div>
+                        </div>
+                        <p class="text-muted mb-2">Total Uploads</p>
+                        <p class="text-success">{{ current_user.get_uploader_rank()['next_goal'] }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card ranking-card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                        <h4 class="card-title">Your Reviewer Rank</h4>
+                        <div class="tier-badge {{ current_user.get_reviewer_rank()['tier_name'].lower().replace(' ', '-') }}">
+                            {{ current_user.get_reviewer_rank()['tier_name'] }}
+                        </div>
+                        <h3 class="text-warning mb-3">{{ current_user.get_reviewer_rank()['rank'] }}</h3>
+                        <div class="progress-ring">
+                            <div class="progress-text">{{ current_user.get_reviewer_rank()['count'] }}</div>
+                        </div>
+                        <p class="text-muted mb-2">Total Reviews</p>
+                        <p class="text-success">{{ current_user.get_reviewer_rank()['next_goal'] }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Leaderboards -->
+        <div class="row">
+            <div class="col-lg-6 mb-5">
+                <div class="card ranking-card">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Uploaders</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if top_uploaders %}
+                            {% for user in top_uploaders %}
+                            <div class="leaderboard-item d-flex align-items-center">
+                                <div class="rank-number {{ 'top3' if loop.index <= 3 else '' }}">
+                                    #{{ loop.index }}
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1 fw-bold">{{ user.name }}</h6>
+                                    <small class="text-muted">{{ user.get_uploader_rank()['tier_name'] }} - {{ user.get_uploader_rank()['rank'] }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary rounded-pill">{{ user.get_uploader_rank()['count'] }} uploads</span>
+                                    <div><small class="text-muted">{{ user.xp_points }} XP</small></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-users fa-3x mb-3"></i>
+                                <p>No uploaders yet. Be the first!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-5">
+                <div class="card ranking-card">
+                    <div class="card-header bg-warning text-dark text-center">
+                        <h3 class="mb-0"><i class="fas fa-medal me-2"></i>Top Reviewers</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if top_reviewers %}
+                            {% for user in top_reviewers %}
+                            <div class="leaderboard-item d-flex align-items-center">
+                                <div class="rank-number {{ 'top3' if loop.index <= 3 else '' }}">
+                                    #{{ loop.index }}
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1 fw-bold">{{ user.name }}</h6>
+                                    <small class="text-muted">{{ user.get_reviewer_rank()['tier_name'] }} - {{ user.get_reviewer_rank()['rank'] }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-warning text-dark rounded-pill">{{ user.get_reviewer_rank()['count'] }} reviews</span>
+                                    <div><small class="text-muted">{{ user.xp_points }} XP</small></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-users fa-3x mb-3"></i>
+                                <p>No reviewers yet. Be the first!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tier System Explanation -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card ranking-card">
+                    <div class="card-header bg-dark text-white text-center">
+                        <h3 class="mb-0"><i class="fas fa-info-circle me-2"></i>Tier System</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">Uploader Tiers</h5>
+                                <div class="tier-info">
+                                    <div class="tier-badge">Ultimate Elite (1%)</div> - 500+ uploads<br><br>
+                                    <div class="tier-badge elite">Elite (2-4%)</div> - 201+ uploads<br><br>
+                                    <div class="tier-badge legend">Legend (5-9%)</div> - 121+ uploads<br><br>
+                                    <div class="tier-badge master">Master (10-29%)</div> - 81+ uploads<br><br>
+                                    <div class="tier-badge expert">Expert (30-49%)</div> - 51+ uploads<br><br>
+                                    <div class="tier-badge veteran">Veteran (50-69%)</div> - 31+ uploads<br><br>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-warning mb-3">Reviewer Tiers</h5>
+                                <div class="tier-info">
+                                    <div class="tier-badge">Ultimate Elite (1%)</div> - 200+ reviews<br><br>
+                                    <div class="tier-badge elite">Elite (2-4%)</div> - 101+ reviews<br><br>
+                                    <div class="tier-badge legend">Legend (5-9%)</div> - 61+ reviews<br><br>
+                                    <div class="tier-badge master">Master (10-29%)</div> - 41+ reviews<br><br>
+                                    <div class="tier-badge expert">Expert (30-49%)</div> - 26+ reviews<br><br>
+                                    <div class="tier-badge veteran">Veteran (50-69%)</div> - 16+ reviews<br><br>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="text-center">
+                            <p class="text-muted">Keep contributing to climb the ranks and unlock exclusive rewards!</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="{{ url_for('upload_file') }}" class="btn btn-primary">
+                                    <i class="fas fa-upload me-2"></i>Start Uploading
+                                </a>
+                                <a href="{{ url_for('review_content') }}" class="btn btn-warning">
+                                    <i class="fas fa-star me-2"></i>Start Reviewing
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
