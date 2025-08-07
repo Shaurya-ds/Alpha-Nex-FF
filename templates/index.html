@@ -17,27 +17,12 @@
     
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #ffffff;
             min-height: 85vh;
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
-        }
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%), 
-                        linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%),
-                        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.1) 75%), 
-                        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.1) 75%);
-            background-size: 60px 60px;
-            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
-            animation: move 20s linear infinite;
         }
         @keyframes move {
             0% { transform: translate(0, 0); }
@@ -143,21 +128,21 @@
         <div class="container hero-content">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-3 fw-bold text-white mb-4">
-                        Power the Future of AI. <span class="text-warning">Get Paid for It.</span>
+                    <h1 class="display-3 fw-bold text-dark mb-4">
+                        Power the Future of AI. <span class="text-primary">Get Paid for It.</span>
                     </h1>
-                    <p class="lead text-white mb-4 opacity-90">
+                    <p class="lead text-muted mb-4">
                         Join the global movement. Contribute data, review others' work, and earn XP that converts into real value.
                     </p>
-                    <p class="mb-4 text-white fs-5">
+                    <p class="mb-4 text-dark fs-5">
                         <strong>Your knowledge, your effort, your reward. Help train the AI of tomorrow.</strong>
                     </p>
                     
                     <div class="d-flex flex-wrap gap-3">
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-warning btn-lg shadow">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-dark btn-lg shadow">
                             <i class="fas fa-rocket me-2"></i>Start Contributing
                         </a>
-                        <a href="#about" class="btn btn-outline-light btn-lg">
+                        <a href="#about" class="btn btn-outline-dark btn-lg">
                             <i class="fas fa-play me-2"></i>Learn How It Works
                         </a>
                     </div>
