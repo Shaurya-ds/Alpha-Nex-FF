@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}User Profile - Alpha Nex{% endblock %}
+{% block title %}{{ current_user.name }}'s Profile - Alpha Nex{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -12,8 +12,8 @@
                      style="width: 80px; height: 80px;">
                     <i class="fas fa-user fa-2x"></i>
                 </div>
-                <h4 class="fw-bold text-black mb-1">User Profile</h4>
-                <p class="text-muted mb-3">Alpha Nex User</p>
+                <h4 class="fw-bold text-black mb-1">{{ current_user.name }}</h4>
+                <p class="text-muted mb-3">{{ current_user.email }}</p>
                 
                 <!-- Account Status -->
                 <div class="d-flex justify-content-center gap-2 mb-3">
