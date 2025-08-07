@@ -36,6 +36,42 @@
                             <strong>Description:</strong>
                             <p class="text-muted mt-2">{{ upload.description }}</p>
                         </div>
+                        
+                        <!-- File Access Section -->
+                        <div class="mt-4 p-3 bg-light rounded">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-file me-2"></i>File Access
+                            </h6>
+                            <div class="d-flex gap-3 mb-3">
+                                <a href="{{ url_for('serve_file', upload_id=upload.id) }}" class="btn btn-primary" target="_blank">
+                                    <i class="fas fa-download me-1"></i>Download File
+                                </a>
+                                {% if upload.category in ['text', 'code', 'document', 'audio', 'image'] %}
+                                <button class="btn btn-outline-secondary" onclick="previewFile()">
+                                    <i class="fas fa-eye me-1"></i>Show Preview
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div id="file-preview" class="preview-section" style="display: none;">
+                                <div class="card border">
+                                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
+                                        <span class="fw-bold">File Preview</span>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="closePreview()">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <pre id="preview-content" class="mb-0" style="max-height: 300px; overflow-y: auto; font-size: 13px; background: #f8f9fa; padding: 15px; border-radius: 5px;"></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <strong>Important:</strong> Please download and review the actual file content before rating. The preview may be truncated.
+                            </small>
+                        </div>
                     </div>
 
                     <!-- Review Progress Bar -->
@@ -209,5 +245,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// File preview functionality
+function previewFile() {
+    const previewDiv = document.getElementById('file-preview');
+    const contentDiv = document.getElementById('preview-content');
+    
+    // Show loading
+    contentDiv.textContent = 'Loading file preview...';
+    previewDiv.style.display = 'block';
+    
+    fetch('/file/preview/{{ upload.id }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                contentDiv.textContent = 'Preview Error: ' + data.error;
+                contentDiv.style.color = '#dc3545';
+            } else {
+                contentDiv.textContent = data.content;
+                contentDiv.style.color = '#212529';
+            }
+        })
+        .catch(error => {
+            contentDiv.textContent = 'Error loading preview: ' + error.message;
+            contentDiv.style.color = '#dc3545';
+        });
+}
+
+function closePreview() {
+    const previewDiv = document.getElementById('file-preview');
+    previewDiv.style.display = 'none';
+}
 </script>
 {% endblock %}

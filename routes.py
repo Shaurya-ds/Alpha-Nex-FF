@@ -4,7 +4,7 @@ Simplified Alpha Nex Routes - Direct Access Without Demo User System
 import os
 import uuid
 from datetime import datetime, timedelta
-from flask import render_template, redirect, url_for, flash, request, session, jsonify
+from flask import render_template, redirect, url_for, flash, request, session, jsonify, send_file
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
@@ -77,38 +77,58 @@ def create_demo_content_for_reviews():
         db.session.add(demo_user)
         db.session.flush()
         
-        # Create demo files
+        # Ensure uploads directory exists
+        upload_folder = 'uploads'
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Create demo files with actual content
         demo_files = [
             {
-                'filename': 'demo_audio.mp3',
-                'original_filename': 'DEMO - Tech Podcast Episode',
-                'file_size': 8388608,
-                'description': 'DEMO FILE - Technology podcast about AI trends',
-                'category': 'audio'
+                'filename': 'demo_audio.txt',
+                'original_filename': 'DEMO - Tech Podcast Episode.mp3',
+                'description': 'DEMO FILE - Technology podcast about AI trends and future innovations in machine learning',
+                'category': 'audio',
+                'content': 'DEMO AUDIO FILE\n\nThis would be a technology podcast discussing:\n- Latest AI trends\n- Machine learning innovations\n- Future of artificial intelligence\n- Real-world applications\n\nDuration: ~45 minutes\nFormat: MP3 Audio'
             },
             {
-                'filename': 'demo_document.pdf',
-                'original_filename': 'DEMO - Research Paper',
-                'file_size': 2097152,
-                'description': 'DEMO FILE - Academic research on machine learning',
-                'category': 'document'
+                'filename': 'demo_document.txt',
+                'original_filename': 'DEMO - Research Paper.pdf',
+                'description': 'DEMO FILE - Academic research paper on machine learning applications in healthcare',
+                'category': 'document',
+                'content': 'DEMO RESEARCH PAPER\n\nTitle: Machine Learning Applications in Healthcare\n\nAbstract:\nThis paper explores the various applications of machine learning in modern healthcare systems.\n\nIntroduction:\nMachine learning has revolutionized healthcare by enabling:\n- Predictive diagnostics\n- Personalized treatment plans\n- Drug discovery acceleration\n- Medical image analysis\n\nConclusion:\nML continues to transform healthcare delivery and patient outcomes.'
             },
             {
                 'filename': 'demo_code.py',
-                'original_filename': 'DEMO - Python Script',
-                'file_size': 524288,
-                'description': 'DEMO FILE - Data analysis script using pandas',
-                'category': 'code'
+                'original_filename': 'DEMO - Python Script.py',
+                'description': 'DEMO FILE - Data analysis script using pandas for processing healthcare data',
+                'category': 'code',
+                'content': '# DEMO Python Script\n# Data Analysis for Healthcare Research\n\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef analyze_patient_data(data_file):\n    """Analyze patient data and generate insights"""\n    df = pd.read_csv(data_file)\n    \n    # Basic statistics\n    print("Data Overview:")\n    print(df.describe())\n    \n    # Generate visualization\n    plt.figure(figsize=(10, 6))\n    df.hist()\n    plt.title("Patient Data Distribution")\n    plt.show()\n    \n    return df\n\nif __name__ == "__main__":\n    # Example usage\n    data = analyze_patient_data("patient_data.csv")\n    print("Analysis complete!")'
+            },
+            {
+                'filename': 'demo_image.txt',
+                'original_filename': 'DEMO - Medical Chart.png',
+                'description': 'DEMO FILE - Medical chart visualization showing patient health metrics over time',
+                'category': 'image',
+                'content': 'DEMO IMAGE FILE\n\nThis would be a medical chart image containing:\n- Patient vital signs over time\n- Blood pressure trends\n- Heart rate monitoring\n- Temperature records\n- Treatment response visualization\n\nFormat: PNG Image (1024x768)\nGenerated using medical visualization software'
             }
         ]
         
         for demo_file in demo_files:
+            # Create the actual file
+            file_path = os.path.join(upload_folder, demo_file['filename'])
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(demo_file['content'])
+            
+            # Get actual file size
+            file_size = os.path.getsize(file_path)
+            
+            # Create database record
             upload = Upload()
             upload.user_id = demo_user.id
             upload.filename = demo_file['filename']
             upload.original_filename = demo_file['original_filename']
-            upload.file_path = f"uploads/{demo_file['filename']}"
-            upload.file_size = demo_file['file_size']
+            upload.file_path = file_path
+            upload.file_size = file_size
             upload.description = demo_file['description']
             upload.category = demo_file['category']
             upload.status = 'pending'
@@ -734,6 +754,52 @@ def delete_upload(upload_id):
         app.logger.error(f"Delete upload error: {e}")
         flash('Error deleting upload.', 'error')
         return redirect(url_for('dashboard'))
+
+@app.route('/file/<int:upload_id>')
+def serve_file(upload_id):
+    """Serve uploaded files for review"""
+    try:
+        upload = Upload.query.get_or_404(upload_id)
+        
+        # Check if file exists
+        if not os.path.exists(upload.file_path):
+            flash('File not found.', 'error')
+            return redirect(url_for('review_content'))
+        
+        return send_file(upload.file_path, 
+                        as_attachment=True,
+                        download_name=upload.original_filename)
+    except Exception as e:
+        app.logger.error(f"File serve error: {e}")
+        flash('Error accessing file.', 'error')
+        return redirect(url_for('review_content'))
+
+@app.route('/file/preview/<int:upload_id>')
+def preview_file(upload_id):
+    """Preview file content for review (for text/code files)"""
+    try:
+        upload = Upload.query.get_or_404(upload_id)
+        
+        # Check if file exists
+        if not os.path.exists(upload.file_path):
+            return jsonify({'error': 'File not found'}), 404
+        
+        # Only preview text-based files for security
+        if upload.category in ['text', 'code', 'document', 'audio', 'image']:
+            try:
+                with open(upload.file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    # Limit preview to first 2000 characters
+                    if len(content) > 2000:
+                        content = content[:2000] + '\n\n... (truncated - download full file to see more)'
+                return jsonify({'content': content, 'category': upload.category})
+            except Exception as e:
+                return jsonify({'error': f'Cannot read file: {str(e)}'}), 400
+        else:
+            return jsonify({'error': 'Preview not available for this file type'}), 400
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/logout')
 def logout():

@@ -44,6 +44,33 @@
                                     
                                     <p class="text-muted small mb-3">{{ upload.description[:100] }}{% if upload.description|length > 100 %}...{% endif %}</p>
                                     
+                                    <!-- File Preview/Download Section -->
+                                    <div class="mb-3">
+                                        <div class="d-flex gap-2 mb-2">
+                                            <a href="{{ url_for('serve_file', upload_id=upload.id) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                                <i class="fas fa-download me-1"></i>Download
+                                            </a>
+                                            {% if upload.category in ['text', 'code', 'document', 'audio', 'image'] %}
+                                            <button class="btn btn-outline-secondary btn-sm" onclick="previewFile({{ upload.id }})">
+                                                <i class="fas fa-eye me-1"></i>Preview
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                        <div id="preview-{{ upload.id }}" class="preview-container" style="display: none;">
+                                            <div class="card border">
+                                                <div class="card-header bg-light py-2">
+                                                    <small class="text-muted">File Preview</small>
+                                                    <button class="btn btn-sm float-end" onclick="closePreview({{ upload.id }})">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="card-body">
+                                                    <pre id="preview-content-{{ upload.id }}" class="mb-0" style="max-height: 200px; overflow-y: auto; font-size: 12px;"></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <!-- Review Progress -->
                                     {% set review_count = upload.reviews|length %}
                                     <div class="mb-3">
@@ -117,4 +144,33 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+function previewFile(uploadId) {
+    const previewDiv = document.getElementById('preview-' + uploadId);
+    const contentDiv = document.getElementById('preview-content-' + uploadId);
+    
+    // Show loading
+    contentDiv.textContent = 'Loading preview...';
+    previewDiv.style.display = 'block';
+    
+    fetch('/file/preview/' + uploadId)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                contentDiv.textContent = 'Error: ' + data.error;
+            } else {
+                contentDiv.textContent = data.content;
+            }
+        })
+        .catch(error => {
+            contentDiv.textContent = 'Error loading preview: ' + error.message;
+        });
+}
+
+function closePreview(uploadId) {
+    const previewDiv = document.getElementById('preview-' + uploadId);
+    previewDiv.style.display = 'none';
+}
+</script>
 {% endblock %}
