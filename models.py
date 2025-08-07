@@ -15,32 +15,32 @@ class User(UserMixin, db.Model):
     reviewer_strikes = db.Column(db.Integer, default=0)
     is_banned = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # KYC fields
     kyc_verified = db.Column(db.Boolean, default=False)
     document_path = db.Column(db.String(255))
     selfie_path = db.Column(db.String(255))
-    
+
     # Daily upload tracking
     daily_upload_bytes = db.Column(db.Integer, default=0)
     daily_upload_count = db.Column(db.Integer, default=0)
     daily_upload_reset = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # Daily review tracking
     daily_review_count = db.Column(db.Integer, default=0)
     daily_review_reset = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # Relationships
     uploads = db.relationship('Upload', backref='user', lazy=True)
     reviews = db.relationship('Review', backref='reviewer', lazy=True)
     strikes = db.relationship('Strike', backref='user', lazy=True)
 
-    
+
     def reset_daily_counters_if_needed(self):
         """Reset daily counters if it's a new day"""
         try:
             current_date = datetime.utcnow().date()
-            
+
             # Reset upload counters if new day
             if self.daily_upload_reset and current_date > self.daily_upload_reset.date():
                 self.daily_upload_bytes = 0
@@ -48,18 +48,18 @@ class User(UserMixin, db.Model):
                 self.daily_upload_reset = datetime.utcnow()
             elif not self.daily_upload_reset:
                 self.daily_upload_reset = datetime.utcnow()
-            
+
             # Reset review counters if new day
             if self.daily_review_reset and current_date > self.daily_review_reset.date():
                 self.daily_review_count = 0
                 self.daily_review_reset = datetime.utcnow()
             elif not self.daily_review_reset:
                 self.daily_review_reset = datetime.utcnow()
-                
+
             db.session.commit()
         except Exception as e:
             pass  # Fail silently
-    
+
     def get_daily_upload_remaining(self):
         """Calculate remaining daily upload capacity in bytes"""
         try:
@@ -69,7 +69,7 @@ class User(UserMixin, db.Model):
             return max_daily - current_usage
         except Exception as e:
             return 500 * 1024 * 1024
-    
+
     def can_upload_today(self):
         """Check if user can upload more files today (max 3 per day)"""
         try:
@@ -77,7 +77,7 @@ class User(UserMixin, db.Model):
             return (self.daily_upload_count or 0) < 3
         except Exception as e:
             return True
-    
+
     def can_review_today(self):
         """Check if user can review more content today (max 5 per day)"""
         try:
@@ -85,7 +85,7 @@ class User(UserMixin, db.Model):
             return (self.daily_review_count or 0) < 5
         except Exception as e:
             return True
-    
+
     def get_remaining_uploads_today(self):
         """Get remaining upload count for today"""
         try:
@@ -93,7 +93,7 @@ class User(UserMixin, db.Model):
             return 3 - (self.daily_upload_count or 0)
         except Exception as e:
             return 3
-    
+
     def get_remaining_reviews_today(self):
         """Get remaining review count for today"""
         try:
@@ -101,30 +101,30 @@ class User(UserMixin, db.Model):
             return 5 - (self.daily_review_count or 0)
         except Exception as e:
             return 5
-    
+
     def can_upload(self, file_size):
         """Check if user can upload a file of given size"""
-        return (self.get_daily_upload_remaining() >= file_size and 
-                self.can_upload_today() and 
-                not self.is_banned and 
+        return (self.get_daily_upload_remaining() >= file_size and
+                self.can_upload_today() and
+                not self.is_banned and
                 file_size <= 100 * 1024 * 1024)  # 100MB limit per file
-    
+
     def add_strike(self, strike_type, reason):
         strike = Strike()
         strike.user_id = self.id
         strike.strike_type = strike_type
         strike.reason = reason
         db.session.add(strike)
-        
+
         if strike_type == 'uploader':
             self.uploader_strikes += 1
         elif strike_type == 'reviewer':
             self.reviewer_strikes += 1
-            
+
         # Ban user if they reach 3 strikes in either category
         if self.uploader_strikes >= 3 or self.reviewer_strikes >= 3:
             self.is_banned = True
-            
+
         db.session.commit()
 
 class Upload(db.Model):
@@ -140,19 +140,19 @@ class Upload(db.Model):
     ai_consent = db.Column(db.Boolean, default=False)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
     deletion_deadline = db.Column(db.DateTime)
-    
+
     # AI analysis results
     duplicate_score = db.Column(db.Float, default=0.0)
     spam_score = db.Column(db.Float, default=0.0)
-    
+
     # Review tracking
     reviews = db.relationship('Review', backref='upload', lazy=True, cascade='all, delete-orphan')
-    
+
     def __init__(self, **kwargs):
         super(Upload, self).__init__(**kwargs)
         # Set deletion deadline to 48 hours from upload
         self.deletion_deadline = datetime.utcnow() + timedelta(hours=48)
-    
+
     def get_average_rating(self):
         try:
             # Query reviews directly to avoid relationship property issues
@@ -164,10 +164,10 @@ class Upload(db.Model):
             return good_reviews / len(reviews_query)
         except Exception as e:
             return None
-    
+
     def can_delete_free(self):
         return datetime.utcnow() < self.deletion_deadline
-    
+
     def get_deletion_penalty(self):
         if self.can_delete_free():
             return 0
@@ -183,7 +183,7 @@ class Review(db.Model):
     description = db.Column(db.Text, nullable=False)
     xp_earned = db.Column(db.Integer, default=10)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # Quality tracking for reviewer strikes
     is_flagged = db.Column(db.Boolean, default=False)
     quality_score = db.Column(db.Float, default=1.0)
@@ -223,6 +223,6 @@ class Rating(db.Model):
     description = db.Column(db.Text, nullable=False)
     contact_email = db.Column(db.String(120))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # Relationship
     user = db.relationship('User', backref='ratings')

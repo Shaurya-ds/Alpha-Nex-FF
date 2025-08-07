@@ -18,13 +18,13 @@ def allowed_file(filename):
     """Check if file extension is allowed."""
     if not filename:
         return False
-    
+
     extension = filename.rsplit('.', 1)[1].lower() if '.' in filename else ''
-    
+
     for category, extensions in ALLOWED_EXTENSIONS.items():
         if extension in extensions:
             return True
-    
+
     return False
 
 def get_file_size(file):
@@ -57,13 +57,13 @@ def get_file_category(filename):
     """Determine file category based on extension."""
     if not filename or '.' not in filename:
         return 'unknown'
-    
+
     extension = filename.rsplit('.', 1)[1].lower()
-    
+
     for category, extensions in ALLOWED_EXTENSIONS.items():
         if extension in extensions:
             return category
-    
+
     return 'unknown'
 
 def sanitize_filename(filename):
@@ -84,10 +84,10 @@ def calculate_deletion_penalty_hours(upload_time, deletion_time):
     """Calculate hours past free deletion window."""
     free_window_hours = 48
     upload_plus_free = upload_time + timedelta(hours=free_window_hours)
-    
+
     if deletion_time <= upload_plus_free:
         return 0
-    
+
     penalty_time = deletion_time - upload_plus_free
     return penalty_time.total_seconds() / 3600
 
@@ -95,13 +95,13 @@ def validate_content_description(description):
     """Validate content description for minimum quality."""
     if not description or len(description.strip()) < 10:
         return False, "Description must be at least 10 characters long."
-    
+
     # Check for spam patterns
     spam_indicators = ['free money', 'click here', 'guaranteed', 'act now']
     description_lower = description.lower()
-    
+
     for indicator in spam_indicators:
         if indicator in description_lower:
             return False, f"Description contains potentially spammy content: '{indicator}'"
-    
+
     return True, "Description is valid."

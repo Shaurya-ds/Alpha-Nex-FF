@@ -1,4 +1,4 @@
-/* Alpha Nex - Custom Styles */
+/* Alpha Nex Custom Styles - Platform CSS */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f8f9fa;
@@ -105,7 +105,7 @@ body {
     .container-fluid {
         padding: 0.5rem 1rem;
     }
-    
+
     .card-body {
         padding: 1.5rem;
     }
