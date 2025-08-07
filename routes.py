@@ -402,10 +402,15 @@ def dashboard():
 def upload_file():
     """File upload endpoint"""
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        user = get_or_create_user_for_session()
+        session['user_id'] = user.id
+        session['user_name'] = 'Demo User'
     
     try:
         user = User.query.get(session['user_id'])
+        if not user:
+            user = get_or_create_user_for_session()
+            session['user_id'] = user.id
         form = UploadForm()
         
         if form.validate_on_submit():
@@ -482,10 +487,15 @@ def upload_file():
 def review_content():
     """Content review page"""
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        user = get_or_create_user_for_session()
+        session['user_id'] = user.id
+        session['user_name'] = 'Demo User'
     
     try:
         user = User.query.get(session['user_id'])
+        if not user:
+            user = get_or_create_user_for_session()
+            session['user_id'] = user.id
         
         # Get uploads that need review (not from current user and not already reviewed)
         reviewed_upload_ids = [r.upload_id for r in Review.query.filter_by(reviewer_id=user.id).all()]
@@ -515,10 +525,15 @@ def review_content():
 def review_upload(upload_id):
     """Review a specific upload"""
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        user = get_or_create_user_for_session()
+        session['user_id'] = user.id
+        session['user_name'] = 'Demo User'
     
     try:
         user = User.query.get(session['user_id'])
+        if not user:
+            user = get_or_create_user_for_session()
+            session['user_id'] = user.id
         upload = Upload.query.get_or_404(upload_id)
         form = ReviewForm()
         
@@ -577,10 +592,15 @@ def review_upload(upload_id):
 def profile():
     """User profile page"""
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        user = get_or_create_user_for_session()
+        session['user_id'] = user.id
+        session['user_name'] = 'Demo User'
     
     try:
         user = User.query.get(session['user_id'])
+        if not user:
+            user = get_or_create_user_for_session()
+            session['user_id'] = user.id
         
         # Get user's strikes and violation history
         strikes = Strike.query.filter_by(user_id=user.id)\
