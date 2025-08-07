@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from flask import render_template, redirect, url_for, flash, request, session, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func
 from app import app, db
 from models import User, Upload, Review, Strike, WithdrawalRequest, AdminAction, Rating
 from forms import UploadForm, ReviewForm, RatingForm
