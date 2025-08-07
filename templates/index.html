@@ -17,10 +17,46 @@
     
     <style>
         .hero-section {
-            background-color: #f8f9fa;
-            min-height: 80vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 85vh;
             display: flex;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%), 
+                        linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.1) 75%), 
+                        linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.1) 75%);
+            background-size: 60px 60px;
+            background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+            animation: move 20s linear infinite;
+        }
+        @keyframes move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         .feature-icon {
             width: 80px;
@@ -34,10 +70,13 @@
             font-size: 2rem;
             margin: 0 auto 1rem auto;
         }
-        .stats-counter {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #212529;
+        .value-card {
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
         }
         .section-title {
             position: relative;
@@ -107,34 +146,53 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <div class="container">
+        <div class="container hero-content">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-3 fw-bold text-dark mb-4">
-                        Power the Future of AI. <span class="text-muted">Get Paid for It.</span>
+                    <h1 class="display-3 fw-bold text-white mb-4">
+                        Power the Future of AI. <span class="text-warning">Get Paid for It.</span>
                     </h1>
-                    <p class="lead text-muted mb-4">
+                    <p class="lead text-white mb-4 opacity-90">
                         Join the global movement. Contribute data, review others' work, and earn XP that converts into real value.
                     </p>
-                    <p class="mb-4 text-dark">
+                    <p class="mb-4 text-white fs-5">
                         <strong>Your knowledge, your effort, your reward. Help train the AI of tomorrow.</strong>
                     </p>
                     
                     <div class="d-flex flex-wrap gap-3">
-                        <a href="{{ url_for('login') }}" class="btn btn-dark btn-lg">
+                        <a href="{{ url_for('name_entry') }}" class="btn btn-warning btn-lg shadow">
                             <i class="fas fa-rocket me-2"></i>Start Contributing
                         </a>
-                        <a href="#about" class="btn btn-outline-dark btn-lg">
+                        <a href="#about" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-play me-2"></i>Learn How It Works
                         </a>
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <div class="card border-0 shadow-sm">
+                    <div class="card border-0 shadow-lg bg-white">
                         <div class="card-body p-5">
-                            <i class="fas fa-brain fa-5x text-dark mb-4"></i>
-                            <h3 class="text-dark">AI-Powered Platform</h3>
-                            <p class="text-muted">Join thousands of contributors worldwide building the future of artificial intelligence</p>
+                            <div class="position-relative">
+                                <i class="fas fa-brain fa-5x text-primary mb-4 animate-pulse"></i>
+                                <div class="position-absolute top-0 start-50 translate-middle-x">
+                                    <i class="fas fa-sparkles text-warning fa-2x" style="animation: twinkle 2s ease-in-out infinite;"></i>
+                                </div>
+                            </div>
+                            <h3 class="text-dark fw-bold">AI-Powered Platform</h3>
+                            <p class="text-muted">Join contributors worldwide building the future of artificial intelligence</p>
+                            <div class="row mt-4">
+                                <div class="col-4">
+                                    <i class="fas fa-upload text-success fa-2x mb-2"></i>
+                                    <small class="text-muted d-block">Upload</small>
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-check text-info fa-2x mb-2"></i>
+                                    <small class="text-muted d-block">Review</small>
+                                </div>
+                                <div class="col-4">
+                                    <i class="fas fa-coins text-warning fa-2x mb-2"></i>
+                                    <small class="text-muted d-block">Earn</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -142,25 +200,45 @@
         </div>
     </section>
 
-    <!-- Stats Section -->
+    <!-- Value Proposition Section -->
     <section class="py-5 bg-white">
         <div class="container">
-            <div class="row text-center">
+            <div class="row text-center g-4">
                 <div class="col-md-3 mb-4">
-                    <div class="stats-counter">10K+</div>
-                    <p class="text-muted">Contributors</p>
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h5 class="fw-bold text-dark">Global Community</h5>
+                            <p class="text-muted">Join contributors from around the world</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-3 mb-4">
-                    <div class="stats-counter">50K+</div>
-                    <p class="text-muted">Data Points</p>
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <i class="fas fa-database fa-3x text-success mb-3"></i>
+                            <h5 class="fw-bold text-dark">Quality Data</h5>
+                            <p class="text-muted">High-quality datasets for AI training</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-3 mb-4">
-                    <div class="stats-counter">$100K+</div>
-                    <p class="text-muted">Earned by Users</p>
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <i class="fas fa-coins fa-3x text-warning mb-3"></i>
+                            <h5 class="fw-bold text-dark">Fair Rewards</h5>
+                            <p class="text-muted">Get paid for your contributions</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-3 mb-4">
-                    <div class="stats-counter">99%</div>
-                    <p class="text-muted">Accuracy Rate</p>
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <i class="fas fa-star fa-3x text-info mb-3"></i>
+                            <h5 class="fw-bold text-dark">Premium Quality</h5>
+                            <p class="text-muted">AI-powered quality assurance</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -312,11 +390,11 @@
             <h2 class="display-5 fw-bold mb-4">Ready to Start Earning?</h2>
             <p class="lead mb-4">Join thousands of contributors worldwide and start earning XP today!</p>
             <div class="d-flex justify-content-center gap-3">
-                <a href="{{ url_for('login') }}" class="btn btn-light btn-lg">
-                    <i class="fas fa-user-plus me-2"></i>Sign Up Now
+                <a href="{{ url_for('name_entry') }}" class="btn btn-warning btn-lg shadow">
+                    <i class="fas fa-user-plus me-2"></i>Start Now - No Registration Required
                 </a>
-                <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                <a href="#about" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-info-circle me-2"></i>Learn More
                 </a>
             </div>
         </div>
