@@ -1,0 +1,104 @@
+"Create a professional, futuristic, and highly engaging landing page for a global crowd-sourced platform called ALPHANEX. The platform allows users worldwide to contribute and review data used for AI training. Users earn XP for their work, and XP can later be converted into real-world money. The platform also runs periodic contests where users can earn significantly larger rewards. This page must be responsive and styled with Bootstrap. Follow these exact sections and instructions:"
+
+
+---
+
+💥 HEADLINE & SUBHEADLINE
+
+> Headline (make this even more attractive than this example):
+“Power the Future of AI. Get Paid for It.”
+(Make this better and more exciting, eye-catching, and futuristic.)
+
+
+
+> Subheadline:
+Join the global movement. Contribute data, review others’ work, and earn XP that converts into real value.
+
+
+
+> CTA Buttons:
+
+
+
+“Start Contributing”
+
+“Learn How It Works”
+
+
+
+---
+
+🎬 HERO SECTION
+
+Futuristic background image or animation showing human-AI collaboration or a global data network.
+
+Tagline:
+
+> “Your knowledge, your effort, your reward. Help train the AI of tomorrow.”
+
+
+
+
+
+---
+
+🌍 ABOUT ALPHANEX
+
+> ALPHANEX is a crowd-powered platform where people contribute and validate real-world data — from text, audio, videos, image labeling, to survey responses. This data helps train advanced Artificial Intelligence systems.
+
+Contributors earn XP (Experience Points) for every approved submission or review. The XP you earn can later be converted into real money or other rewards.
+
+We also run global contests where top contributors win significantly higher payouts. Whether you're a student, professional, or digital explorer — there's a place for you at ALPHANEX.
+
+
+
+
+---
+
+🛠 FEATURES
+
+🔁 Contribute Data – Submit valuable data in tasks such as labeling, writing, transcription, and more.
+
+✅ Review Submissions – Help validate other users’ work to keep the data clean and accurate.
+
+💎 Earn XP – Receive XP for every approved submission and review.
+
+🎉 Join Contests – Compete in periodic events to earn large bonus payouts.
+
+📊 Track Everything – Monitor your XP, performance, and task history in a user-friendly dashboard.
+
+🤖 Used by AI Companies – Your contributions are sent to organizations building the next generation of AI systems.
+
+
+
+---
+
+📄 POLICIES
+
+> Privacy Policy
+We respect your privacy. All data you submit is anonymized and securely stored. Personal data is never sold.
+
+
+
+> XP and Reward Policy
+XP is earned fairly through useful contributions and high-quality reviews. Abusing the system leads to bans and loss of XP. XP can be redeemed once it reaches a certain threshold.
+
+
+
+> Monetization Policy
+Data is licensed to AI companies and research partners. A portion of that revenue is distributed to contributors based on their XP. Earnings are released after quality verification.
+
+
+
+> Refund & Appeal Policy
+Incorrectly rejected XP can be appealed within 7 days. Appeals are handled by moderators and advanced AI models. All decisions are final after re-evaluation.
+
+
+
+
+---
+
+👥 COMMUNITY & SUPPORT
+
+> 📧 Contact: support@alphanex.com
+🕐 Support Hours: 24×7
