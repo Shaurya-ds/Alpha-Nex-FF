@@ -35,7 +35,7 @@ def get_or_create_user_for_session():
         user.name = user_name
         user.email = f"{username}@alphanex.com"
         user.password_hash = generate_password_hash('alphanex123')
-        user.xp_points = 500
+        user.xp_points = 0
         user.daily_upload_count = 0
         user.daily_upload_bytes = 0
         user.daily_review_count = 0
@@ -291,7 +291,7 @@ def signup():
         user.email = form.email.data
         user.username = form.email.data.split('@')[0]  # Use email prefix as username
         user.password_hash = generate_password_hash(form.password.data)
-        user.xp_points = 500
+        user.xp_points = 0
         user.daily_upload_count = 0
         user.daily_upload_bytes = 0
         user.daily_review_count = 0
