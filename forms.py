@@ -39,10 +39,6 @@ class UploadForm(FlaskForm):
     ], validators=[DataRequired()])
     ai_consent = BooleanField('I consent to AI analysis of this content', validators=[DataRequired()])
 
-class ReviewForm(FlaskForm):
-    """Content review form"""
-    rating = IntegerField('Rating (1-5)', validators=[DataRequired()])
-    description = TextAreaField('Review Description', validators=[DataRequired(), Length(min=10, max=500)])
 
 class RatingForm(FlaskForm):
     """Website rating form"""
@@ -78,8 +74,8 @@ class ReviewForm(FlaskForm):
         ('bad', 'Bad - Poor quality or inappropriate')
     ])
     description = TextAreaField('Review Description', 
-                              validators=[DataRequired(), Length(min=20, max=500)],
-                              render_kw={"placeholder": "Explain your rating in detail..."})
+                              validators=[Length(min=10, max=500)],
+                              render_kw={"placeholder": "Explain your rating in detail (required for bad ratings)..."})
 
 class WithdrawalForm(FlaskForm):
     amount_xp = IntegerField('XP Amount', validators=[DataRequired()])

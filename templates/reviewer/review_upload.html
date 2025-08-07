@@ -86,8 +86,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-check">
-                                        {{ form.rating(value="good", class="form-check-input") }}
-                                        <label class="form-check-label text-success fw-bold" for="{{ form.rating.id }}-0">
+                                        <input type="radio" name="rating" value="good" class="form-check-input" id="rating-good" required>
+                                        <label class="form-check-label text-success fw-bold" for="rating-good">
                                             <i class="fas fa-thumbs-up me-1"></i>Good Content
                                         </label>
                                         <small class="text-muted d-block">Quality, relevant, appropriate content</small>
@@ -95,8 +95,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-check">
-                                        {{ form.rating(value="bad", class="form-check-input") }}
-                                        <label class="form-check-label text-danger fw-bold" for="{{ form.rating.id }}-1">
+                                        <input type="radio" name="rating" value="bad" class="form-check-input" id="rating-bad" required>
+                                        <label class="form-check-label text-danger fw-bold" for="rating-bad">
                                             <i class="fas fa-thumbs-down me-1"></i>Poor Content
                                         </label>
                                         <small class="text-muted d-block">Inappropriate, spam, or low quality</small>
@@ -113,7 +113,7 @@
                             <div class="alert alert-info py-2">
                                 <small><i class="fas fa-info-circle me-1"></i><strong>Required for negative reviews:</strong> You must provide a detailed reason (at least 10 characters) when rating content as "Bad".</small>
                             </div>
-                            {{ form.description(class="form-control", rows="4", placeholder="Explain your rating and provide constructive feedback. For negative reviews, detailed reasoning is required.") }}
+                            {{ form.description(class="form-control", rows="4", placeholder="Explain your rating and provide constructive feedback. For negative reviews, detailed reasoning is required.", id="description-field") }}
                             {% for error in form.description.errors %}
                                 <div class="text-danger small">{{ error }}</div>
                             {% endfor %}
@@ -123,7 +123,7 @@
                             <a href="{{ url_for('review_content') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Back to Reviews
                             </a>
-                            <button type="submit" class="btn btn-dark">
+                            <button type="submit" class="btn btn-dark" id="submit-review">
                                 <i class="fas fa-check me-2"></i>Submit Review (+10 XP)
                             </button>
                         </div>
@@ -147,4 +147,67 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ratingRadios = document.querySelectorAll('input[name="rating"]');
+    const descriptionField = document.getElementById('description-field');
+    const submitBtn = document.getElementById('submit-review');
+    const form = document.querySelector('form');
+    
+    // Update description requirement based on rating selection
+    ratingRadios.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            if (this.value === 'bad') {
+                descriptionField.setAttribute('required', 'required');
+                descriptionField.setAttribute('minlength', '10');
+                descriptionField.setAttribute('placeholder', 'Detailed reasoning is required for bad ratings (minimum 10 characters)...');
+            } else {
+                descriptionField.removeAttribute('required');
+                descriptionField.removeAttribute('minlength');
+                descriptionField.setAttribute('placeholder', 'Optional: Provide additional feedback about this content...');
+            }
+        });
+    });
+    
+    // Form validation before submit
+    form.addEventListener('submit', function(e) {
+        const selectedRating = document.querySelector('input[name="rating"]:checked');
+        
+        if (!selectedRating) {
+            e.preventDefault();
+            alert('Please select a rating (Good or Bad) before submitting.');
+            return false;
+        }
+        
+        if (selectedRating.value === 'bad') {
+            const description = descriptionField.value.trim();
+            if (description.length < 10) {
+                e.preventDefault();
+                alert('Please provide detailed reasoning for bad ratings (minimum 10 characters).');
+                descriptionField.focus();
+                return false;
+            }
+        }
+    });
+    
+    // Visual feedback for rating selection
+    ratingRadios.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            // Remove active class from all cards
+            document.querySelectorAll('.form-check').forEach(function(card) {
+                card.classList.remove('border', 'border-primary', 'bg-light');
+            });
+            
+            // Add active class to selected card
+            if (this.checked) {
+                const parentCard = this.closest('.form-check');
+                parentCard.classList.add('border', 'border-primary', 'bg-light');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

@@ -497,6 +497,9 @@ def review_content():
             user = get_or_create_user_for_session()
             session['user_id'] = user.id
         
+        # Create demo content if needed
+        create_demo_content_for_reviews()
+        
         # Get uploads that need review (not from current user and not already reviewed)
         reviewed_upload_ids = [r.upload_id for r in Review.query.filter_by(reviewer_id=user.id).all()]
         
@@ -544,13 +547,20 @@ def review_upload(upload_id):
                 flash('You have already reviewed this upload.', 'warning')
                 return redirect(url_for('review_content'))
             
+            # Validate required description for bad ratings
+            if form.rating.data == 'bad' and (not form.description.data or len(form.description.data.strip()) < 10):
+                flash('Detailed reasoning is required when rating content as "Bad" (minimum 10 characters).', 'error')
+                return render_template('reviewer/review_upload.html', upload=upload, form=form, 
+                                     review_count=review_count, existing_reviews=existing_reviews,
+                                     demo_user=user, current_user=user)
+            
             # Create review
             review = Review()
             review.upload_id = upload_id
             review.reviewer_id = user.id
             review.rating = form.rating.data
-            review.description = form.description.data
-            review.xp_earned = 15  # Review XP
+            review.description = form.description.data if form.description.data else ''
+            review.xp_earned = 10  # Review XP
             
             # Update user stats - give XP for review
             user.xp_points += 15
