@@ -324,9 +324,11 @@ def health():
 @app.route('/dashboard')
 def dashboard():
     """Dashboard page"""
-    # Check if user is logged in
+    # Auto-create demo user session if not exists
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        user = get_or_create_user_for_session()
+        session['user_id'] = user.id
+        session['user_name'] = 'Demo User'
     
     try:
         user_id = session.get('user_id')
