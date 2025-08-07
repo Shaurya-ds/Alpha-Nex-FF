@@ -1,0 +1,107 @@
+You are an expert debugging assistant working inside Replit. Your job is to:
+
+1. Analyze my app's source code (Python + Flask/Node + SQL + HTML/CSS/JS) and find any:
+
+Database issues (wrong table or column names)
+
+Broken routes (404, 502, 500)
+
+Memory or storage problems (hitting limits of Replit free tier)
+
+Session/login bugs
+
+Static file or image not loading errors
+
+App crash causes (especially Replit sleeping or crashing)
+
+
+
+2. Use this checklist to debug:
+
+Does every route (@app.route) return a valid response?
+
+Are all HTML templates (render_template) actually present in the templates folder?
+
+Are SQL queries using correct table names and columns?
+
+Is any route or database call too slow or causing timeouts?
+
+Is Cloudinary or Replit storage full or missing config?
+
+
+
+3. Suggest fixes clearly for:
+
+Missing templates
+
+Missing columns or DB schema mismatch
+
+Crash from environment variables (missing API keys, secret keys)
+
+Replit "sleep" behavior causing 502 or 404
+
+
+
+4. Suggest improvements for:
+
+Making the app auto-recover from a crash
+
+Logging clear error messages (try/except + print + logging)
+
+Sending errors to admin email or Discord
+
+Reducing storage or optimizing images (Cloudinary, TinyPNG)
+
+
+
+
+Start by analyzing this folder:
+
+/main.py
+/routes/*.py
+/templates/*.html
+/static/*
+/schema.sql
+
+Then generate an error report + fix recommendations.
+
+
+
+
+---
+
+✅ BONUS: Auto-Fix Prompt (Use after identifying the issue)
+
+If you're using GPT in a tool like Replit's Ghostwriter, or uploading code to ChatGPT:
+
+> 🔧 “Now rewrite this broken route or SQL query to match the correct table/column from my database. Add proper try/except and give a fallback error page instead of crashing the app.”
+
+
+
+
+---
+
+💡 Extra Ideas to Handle 502/404:
+
+502 Bad Gateway on Replit often means your app:
+
+Crashed due to an error (check Logs)
+
+Went to sleep and hasn’t restarted yet (common on free plans)
+
+Memory leak or storage full
+
+
+
+Solution:
+
+Add try/except on every DB call
+
+Add a basic health check route like:
+
+
+@app.route("/health")
+def health():
+    return "OK", 200
+
+Use a Replit background tab or uptime tool to ping your app every 15 min

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4">Oops!</h1>
+            <h2>Something went wrong</h2>
+            {% if error %}
+            <div class="alert alert-warning mt-3">
+                <strong>Error:</strong> {{ error }}
+            </div>
+            {% endif %}
+            <p class="text-muted">Don't worry - our system is designed to recover automatically.</p>
+            <div class="mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-home"></i> Return Home
+                </a>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,181 @@
+/* Alpha Nex - Custom Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-dark {
+    background-color: #212529;
+    border-color: #212529;
+}
+
+.btn-outline-dark {
+    color: #212529;
+    border-color: #212529;
+}
+
+.badge {
+    font-size: 0.875rem;
+}
+
+.star-rating .star {
+    color: #ffc107;
+    font-size: 1.25rem;
+}
+
+.upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    border-color: #adb5bd;
+    background-color: #f8f9fa;
+}
+
+.progress-bar {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Navigation active states */
+.nav-link.active {
+    font-weight: 600;
+    color: #212529 !important;
+}
+
+/* Custom button styles */
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+}
+
+/* Card hover effects */
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.5rem 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Rating stars specific styling */
+.rating-stars .star-label {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rating-stars .star-label:hover i,
+.rating-stars .star-label.active i {
+    color: #ffc107 !important;
+    transform: scale(1.1);
+}
+
+/* Dashboard specific styles */
+.dashboard-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.dashboard-card .badge {
+    background-color: rgba(255,255,255,0.2) !important;
+}
+
+/* File upload styles */
+.file-upload-card {
+    border: 2px dashed #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.file-upload-card:hover {
+    border-color: #007bff;
+    background-color: rgba(0,123,255,0.05);
+}
+
+/* Review content styles */
+.review-item {
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+    border-radius: 0 8px 8px 0;
+}
+
+.review-item:hover {
+    background-color: #e9ecef;
+}
+
+/* Animation utilities */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading spinner */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
